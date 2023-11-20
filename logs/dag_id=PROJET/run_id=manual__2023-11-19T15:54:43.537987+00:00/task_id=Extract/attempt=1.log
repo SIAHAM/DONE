@@ -1,0 +1,31 @@
+[2023-11-19T15:54:45.080+0000] {taskinstance.py:1159} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: Projet.Extract manual__2023-11-19T15:54:43.537987+00:00 [queued]>
+[2023-11-19T15:54:45.087+0000] {taskinstance.py:1159} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: Projet.Extract manual__2023-11-19T15:54:43.537987+00:00 [queued]>
+[2023-11-19T15:54:45.088+0000] {taskinstance.py:1361} INFO - Starting attempt 1 of 1
+[2023-11-19T15:54:45.096+0000] {taskinstance.py:1382} INFO - Executing <Task(PythonOperator): Extract> on 2023-11-19 15:54:43.537987+00:00
+[2023-11-19T15:54:45.129+0000] {standard_task_runner.py:57} INFO - Started process 23148 to run task
+[2023-11-19T15:54:45.137+0000] {standard_task_runner.py:84} INFO - Running: ['***', 'tasks', 'run', 'Projet', 'Extract', 'manual__2023-11-19T15:54:43.537987+00:00', '--job-id', '33', '--raw', '--subdir', 'DAGS_FOLDER/dag_sample.py', '--cfg-path', '/tmp/tmpo_9r6db6']
+[2023-11-19T15:54:45.147+0000] {standard_task_runner.py:85} INFO - Job 33: Subtask Extract
+[2023-11-19T15:54:45.186+0000] {task_command.py:416} INFO - Running <TaskInstance: Projet.Extract manual__2023-11-19T15:54:43.537987+00:00 [running]> on host b6ca478389d2
+[2023-11-19T15:54:45.731+0000] {taskinstance.py:1662} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='Projet' AIRFLOW_CTX_TASK_ID='Extract' AIRFLOW_CTX_EXECUTION_DATE='2023-11-19T15:54:43.537987+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2023-11-19T15:54:43.537987+00:00'
+[2023-11-19T15:54:45.973+0000] {warnings.py:109} WARNING - /opt/***/dags/dag_sample.py:15: DtypeWarning: Columns (0) have mixed types. Specify dtype option on import or set low_memory=False.
+  df_urgences = pd.read_csv(csv_file_path_urgences, delimiter=';', dtype={'Code tranches d\'age': str})
+
+[2023-11-19T15:54:46.015+0000] {taskinstance.py:1937} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.8/site-packages/airflow/operators/python.py", line 192, in execute
+    return_value = self.execute_callable()
+  File "/home/airflow/.local/lib/python3.8/site-packages/airflow/operators/python.py", line 209, in execute_callable
+    return self.python_callable(*self.op_args, **self.op_kwargs)
+  File "/opt/airflow/dags/dag_sample.py", line 27, in extract_data
+    df_departement = pd.read_json(json_file_path_departements)
+  File "/home/airflow/.local/lib/python3.8/site-packages/pandas/io/json/_json.py", line 760, in read_json
+    json_reader = JsonReader(
+  File "/home/airflow/.local/lib/python3.8/site-packages/pandas/io/json/_json.py", line 861, in __init__
+    data = self._get_data_from_filepath(filepath_or_buffer)
+  File "/home/airflow/.local/lib/python3.8/site-packages/pandas/io/json/_json.py", line 917, in _get_data_from_filepath
+    raise FileNotFoundError(f"File {filepath_or_buffer} does not exist")
+FileNotFoundError: File /opt/***/data/to/departements-region.json does not exist
+[2023-11-19T15:54:46.043+0000] {taskinstance.py:1400} INFO - Marking task as FAILED. dag_id=Projet, task_id=Extract, execution_date=20231119T155443, start_date=20231119T155445, end_date=20231119T155446
+[2023-11-19T15:54:46.062+0000] {standard_task_runner.py:104} ERROR - Failed to execute job 33 for task Extract (File /opt/***/data/to/departements-region.json does not exist; 23148)
+[2023-11-19T15:54:46.118+0000] {local_task_job_runner.py:228} INFO - Task exited with return code 1
+[2023-11-19T15:54:46.135+0000] {taskinstance.py:2778} INFO - 0 downstream tasks scheduled from follow-on schedule check

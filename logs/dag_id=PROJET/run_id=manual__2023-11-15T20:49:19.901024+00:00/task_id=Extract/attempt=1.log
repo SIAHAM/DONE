@@ -1,0 +1,23 @@
+[2023-11-15T20:49:23.026+0000] {taskinstance.py:1159} INFO - Dependencies all met for dep_context=non-requeueable deps ti=<TaskInstance: PROJET.Extract manual__2023-11-15T20:49:19.901024+00:00 [queued]>
+[2023-11-15T20:49:23.036+0000] {taskinstance.py:1159} INFO - Dependencies all met for dep_context=requeueable deps ti=<TaskInstance: PROJET.Extract manual__2023-11-15T20:49:19.901024+00:00 [queued]>
+[2023-11-15T20:49:23.038+0000] {taskinstance.py:1361} INFO - Starting attempt 1 of 1
+[2023-11-15T20:49:23.047+0000] {taskinstance.py:1382} INFO - Executing <Task(BashOperator): Extract> on 2023-11-15 20:49:19.901024+00:00
+[2023-11-15T20:49:23.055+0000] {standard_task_runner.py:57} INFO - Started process 2540 to run task
+[2023-11-15T20:49:23.064+0000] {standard_task_runner.py:84} INFO - Running: ['***', 'tasks', 'run', 'PROJET', 'Extract', 'manual__2023-11-15T20:49:19.901024+00:00', '--job-id', '3', '--raw', '--subdir', 'DAGS_FOLDER/Untitled-1.py', '--cfg-path', '/tmp/tmprqgubwuo']
+[2023-11-15T20:49:23.065+0000] {standard_task_runner.py:85} INFO - Job 3: Subtask Extract
+[2023-11-15T20:49:23.121+0000] {task_command.py:416} INFO - Running <TaskInstance: PROJET.Extract manual__2023-11-15T20:49:19.901024+00:00 [running]> on host a367eff75e40
+[2023-11-15T20:49:23.181+0000] {taskinstance.py:1662} INFO - Exporting env vars: AIRFLOW_CTX_DAG_OWNER='***' AIRFLOW_CTX_DAG_ID='PROJET' AIRFLOW_CTX_TASK_ID='Extract' AIRFLOW_CTX_EXECUTION_DATE='2023-11-15T20:49:19.901024+00:00' AIRFLOW_CTX_TRY_NUMBER='1' AIRFLOW_CTX_DAG_RUN_ID='manual__2023-11-15T20:49:19.901024+00:00'
+[2023-11-15T20:49:23.186+0000] {subprocess.py:63} INFO - Tmp dir root location: /tmp
+[2023-11-15T20:49:23.187+0000] {subprocess.py:75} INFO - Running command: ['/bin/bash', '-c', 'curl --keepalive-time 6000 -o ${AIRFLOW_HOME}/data/code-tranches-dage-donnees-urgences.txt /Users/alicia/Desktop/mesfichiers/donnees-urgences-SOS-medecins.csv']
+[2023-11-15T20:49:23.199+0000] {subprocess.py:86} INFO - Output:
+[2023-11-15T20:49:23.215+0000] {subprocess.py:93} INFO - curl: (3) URL using bad/illegal format or missing URL
+[2023-11-15T20:49:23.216+0000] {subprocess.py:97} INFO - Command exited with return code 3
+[2023-11-15T20:49:23.224+0000] {taskinstance.py:1937} ERROR - Task failed with exception
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.8/site-packages/airflow/operators/bash.py", line 210, in execute
+    raise AirflowException(
+airflow.exceptions.AirflowException: Bash command failed. The command returned a non-zero exit code 3.
+[2023-11-15T20:49:23.227+0000] {taskinstance.py:1400} INFO - Marking task as FAILED. dag_id=PROJET, task_id=Extract, execution_date=20231115T204919, start_date=20231115T204923, end_date=20231115T204923
+[2023-11-15T20:49:23.234+0000] {standard_task_runner.py:104} ERROR - Failed to execute job 3 for task Extract (Bash command failed. The command returned a non-zero exit code 3.; 2540)
+[2023-11-15T20:49:23.278+0000] {local_task_job_runner.py:228} INFO - Task exited with return code 1
+[2023-11-15T20:49:23.292+0000] {taskinstance.py:2778} INFO - 0 downstream tasks scheduled from follow-on schedule check
