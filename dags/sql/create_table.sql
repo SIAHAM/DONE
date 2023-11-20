@@ -1,3 +1,7 @@
+drop  table IF EXISTS passages_corona; 
+drop  table IF EXISTS departements; 
+drop  table IF EXISTS tranches_dage; 
+
 CREATE TABLE IF NOT EXISTS tranches_dage(
       Code_tranches_dage VARCHAR(10),
       Age INT,
@@ -30,7 +34,6 @@ CREATE TABLE IF NOT EXISTS passages_corona (
     nbre_acte_corona_f INT,
     nbre_acte_tot_h INT,
     nbre_acte_tot_f INT,
-    PRIMARY KEY (date_de_passage, sursaud_cl_age_corona),
-    FOREIGN KEY (dep) REFERNCES departements(num_dep),
-    FOREIGN KEY (sursaud_cl_age_corona) REFERNCES tranches_dage(Code_tranches_dage )
-);
+    PRIMARY KEY (date_de_passage, sursaud_cl_age_corona)
+
+);   

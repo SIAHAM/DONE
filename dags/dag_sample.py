@@ -1,52 +1,129 @@
-from datetime import datetime
-import sys
-import csv
-import pandas as pd 
-import os
-from airflow.hooks.postgres_hook import PostgresHook
-import json
+#
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
 
+"""
+### Tutorial Documentation
+Documentation that goes along with the Airflow tutorial located
+[here](https://airflow.apache.org/tutorial.html)
+"""
+# [START tutorial]
+# [START import_module]
+from datetime import datetime, timedelta
+from textwrap import dedent
+
+# The DAG object; we'll need this to instantiate a DAG
 from airflow import DAG
-from airflow.operators.python_operator import PythonOperator
 
-def extract_data():
-    #spécifier le chemin vers le fichier CSV
-    csv_file_path_sos = os.path.expandvars("${AIRFLOW_HOME}/data/donnees-urgences-SOS-medecins.csv")
-    df_urgences = pd.read_csv(csv_file_path_sos, delimiter=';', dtype={'Code tranches d\'age': str})
+# Operators; we need this to operate!
+from airflow.operators.bash import BashOperator
 
+# [END import_module]
 
-    csv_file_path_age = os.path.expandvars("${AIRFLOW_HOME}/data/code-tranches-dage-donnees-urgences.csv")
-    df_age = pd.read_csv(csv_file_path_age, delimiter=",")
-    
-    json_file_path_departements = os.path.expandvars("${AIRFLOW_HOME}/data/departements-region.json")
-    with open(json_file_path_departements, 'r',encoding="UTF-8") as json_file:
-        data = json.load(json_file)
-        df_departements = pd.DataFrame(data)
-    print(df_age)
-    print(df_departements)
-    # Retourner les DataFrames pour les rendre accessibledop en dehors de la fonction
-    return df_age, df_urgences, df_departements
-
+# [START default_args]
+# These args will get passed on to each operator
+# You can override them on a per-task basis during operator initialization
 default_args = {
     'owner': 'airflow',
-    'depends_on_past': False
+    'depends_on_past': False,
+    'email': ['airflow@example.com'],
+    'email_on_failure': False,
+    'email_on_retry': False,
+    'retries': 1,
+    'retry_delay': timedelta(minutes=5),
+    # 'queue': 'bash_queue',
+    # 'pool': 'backfill',
+    # 'priority_weight': 10,
+    # 'end_date': datetime(2016, 1, 1),
+    # 'wait_for_downstream': False,
+    # 'dag': dag,
+    # 'sla': timedelta(hours=2),
+    # 'execution_timeout': timedelta(seconds=300),
+    # 'on_failure_callback': some_function,
+    # 'on_success_callback': some_other_function,
+    # 'on_retry_callback': another_function,
+    # 'sla_miss_callback': yet_another_function,
+    # 'trigger_rule': 'all_success'
 }
+# [END default_args]
 
+# [START instantiate_dag]
 with DAG(
-    'Projet',
+    'FirstDag',
     default_args=default_args,
-    schedule_interval=None,
+    description='A simple tutorial DAG',
+    schedule_interval=timedelta(days=1),
     start_date=datetime(2021, 1, 1),
     catchup=False,
+    tags=['example'],
 ) as dag:
+    # [END instantiate_dag]
 
-    # Utiliser un PythonOperator pour appeler la fonction extract_data
-    extract_task = PythonOperator(
-        task_id='Extract',
-        python_callable=extract_data
+    # t1, t2 and t3 are examples of tasks created by instantiating operators
+    # [START basic_task]
+    t1 = BashOperator(
+        task_id='print_date',
+        bash_command='date',
     )
 
+    t2 = BashOperator(
+        task_id='sleep',
+        depends_on_past=False,
+        bash_command='sleep 5',
+        retries=3,
+    )
+    # [END basic_task]
 
-"HELLO izane"
-print(sys.executable)
-extract_task
+    # [START documentation]
+    t1.doc_md = dedent(
+        """\
+    #### Task Documentation
+    You can document your task using the attributes `doc_md` (markdown),
+    `doc` (plain text), `doc_rst`, `doc_json`, `doc_yaml` which gets
+    rendered in the UI's Task Instance Details page.
+    ![img](http://montcs.bloomu.edu/~bobmon/Semesters/2012-01/491/import%20soul.png)
+
+    """
+    )
+
+    dag.doc_md = __doc__  # providing that you have a docstring at the beginning of the DAG
+    dag.doc_md = """
+    This is a documentation placed anywhere
+    """  # otherwise, type it like this
+    # [END documentation]
+
+    # [START jinja_template]
+    templated_command = dedent(
+        """
+    {% for i in range(5) %}
+        echo "{{ ds }}"
+        echo "{{ macros.ds_add(ds, 7)}}"
+        echo "{{ params.my_param }}"
+    {% endfor %}
+    """
+    )
+
+    t3 = BashOperator(
+        task_id='templated',
+        depends_on_past=False,
+        bash_command=templated_command,
+        params={'my_param': 'Parameter I passed in'},
+    )
+    # [END jinja_template]
+
+    t1 >> [t2, t3]
+# [END tutorial]
