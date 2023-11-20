@@ -16,30 +16,38 @@ def data_transform_and_load():
     df_urgences = pd.read_csv(csv_file_path_sos, delimiter=';', dtype={'Code tranches d\'age': str})
 
     csv_file_path_age = os.path.expandvars("${AIRFLOW_HOME}/data/code-tranches-dage-donnees-urgences.csv")
-    df_age = pd.read_csv(csv_file_path_age, delimiter=",")
+    df_age = pd.read_csv(csv_file_path_age, delimiter=",", dtype = {'Code_tranches_age'})
     
     json_file_path_departements = os.path.expandvars("${AIRFLOW_HOME}/data/departements-region.json")
     with open(json_file_path_departements, 'r',encoding="UTF-8") as json_file:
         data = json.load(json_file)
         df_departements = pd.DataFrame(data)
     
+    df_urgences.columns = df_urgences.columns.str.strip() # supp des espaces  
     
+    df_urgences = df_urgences.drop_duplicates().reset_index(drop=True) #supp des lignes en doublons :
     #transformations
     #fichier 1 donnes-urgences-SOS-medecins.csv
     #1- Uniformisations des dates
     df_urgences['date_de_passage']= pd.to_datetime(df_urgences['date_de_passage'],errors = 'coerce')
     df_urgences['date_de_passage']= df_urgences['date_de_passage'].dt.strftime('%Y-%m-%d') 
-    # Remplacer les valeurs manquantes par une valeur par défaut
-    df_urgences.columns = df_urgences.columns.str.strip() # supp des espaces 
     
-    df_urgences = df_urgences.drop_duplicates().reset_index(drop=True) #supp des lignes en doublons :
-    #columns_to_convert = ['dep', 'sursaud_cl_age_corona', 'nbre_pass_corona', 'nbre_pass_tot', 'nbre_hospit_corona',
-                         #'nbre_pass_corona_h', 'nbre_pass_corona_f', 'nbre_pass_tot_h', 'nbre_pass_tot_f',
-                         #'nbre_hospit_corona_h', 'nbre_hospit_corona_f', 'nbre_acte_corona', 'nbre_acte_tot',
-                         #'nbre_acte_corona_h', 'nbre_acte_corona_f', 'nbre_acte_tot_h', 'nbre_acte_tot_f']
+   
+    
+    columns_to_convert = ['dep', 'sursaud_cl_age_corona', 'nbre_pass_corona', 'nbre_pass_tot', 'nbre_hospit_corona',
+                         'nbre_pass_corona_h', 'nbre_pass_corona_f', 'nbre_pass_tot_h', 'nbre_pass_tot_f',
+                         'nbre_hospit_corona_h', 'nbre_hospit_corona_f', 'nbre_acte_corona', 'nbre_acte_tot',
+                         'nbre_acte_corona_h', 'nbre_acte_corona_f', 'nbre_acte_tot_h', 'nbre_acte_tot_f']
 
-    #df_urgences['columns_to_convert'] = df_urgences['columns_to_convert'].apply(pd.to_numeric, errors='coerce')
-   # df_urgences['columns_to_convert'] = df_urgences['columns_to_convert'].fillna(0) 
+    df_urgences['columns_to_convert'] = df_urgences['columns_to_convert'].apply(pd.to_numeric, errors='coerce')
+    
+    # Remplacer les valeurs manquantes par une valeur par défaut
+    df_urgences['columns_to_convert'] = df_urgences['columns_to_convert'].fillna(0) 
+     
+    #result = df.groupby(["Code commune"]).aggregate(prix_moyen = ('prix par m2','mean')).reset_index()
+    #result = result.round(0) 
+    #postgres_sql_upload = PostgresHook(postgres_conn_id="postgres_connexion")
+    #result.to_sql('analyse_prix', postgres_sql_upload.get_sqlalchemy_engine(), if_exists='replace', chunksize=1000) 
 
     # Retourner les DataFrames pour les rendre accessibledop en dehors de la fonction
     return df_age, df_urgences, df_departements
@@ -74,8 +82,7 @@ with DAG(
 print(sys.executable)
 extract_task
 
-
-
+"""
 
 
 def data_transform_and_load():
@@ -131,3 +138,4 @@ with DAG(
 
     [extract, create_table] >> transform_and_load
 
+""" #hey you 
