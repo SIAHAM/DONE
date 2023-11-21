@@ -25,17 +25,28 @@ def data_transform_and_load():
         
     #nettoyage 
     df_tranches_dage ['Code_tranches_dage'] = df_tranches_dage['Code_tranches_dage'].astype(int) 
+    df_tranches_dage['Age'] = df_tranches_dage['Age'].astype(str)
     df_urgences['date_de_passage'] = pd.to_datetime(df_urgences['date_de_passage'])
-    print('---------kabyle---------------------')
-
-# Suppose df_departements est votre DataFrame
+    # Suppose df_departements est votre DataFrame
     df_departements["num_dep"] = pd.to_numeric(df_departements["num_dep"], errors='coerce', downcast='integer')
     df_departements["num_dep"] = df_departements["num_dep"].astype('Int64')  # Utilisation de 'Int64' pour permettre les valeurs nulles (NaN)
-
-    print(df_departements['num_dep'].dtypes)
-    print('---------kabyle---------------------')
+    df_departements["dep_name"] = df_departements["dep_name"].astype(str)
+    df_departements["region_name"] = df_departements["region_name"].astype(str)
+    df_urgences = df_urgences.fillna(0)
+    # Convertir les types de colonnes en entier
+    for column in df_urgences.columns:
+        if column != 'date_de_passage': 
+            df_urgences[column] = pd.to_numeric(df_urgences[column], errors='coerce').fillna(0).astype(int)
+    df_urgences.columns = df_urgences.columns.str.strip() # supprimer des espaces 
     
-   #print(df_urgences.dtypes)
+    #print(df_departements['num_dep'].dtypes)
+    #print('age',df_tranches_dage['Age'].dtypes)
+    print('------------------------------')
+    print(df_urgences.dtypes)
+    print(df_departements.dtypes)
+    print(df_tranches_dage.dtypes)
+    print('------------------------------')
+   
    #print(df_departements.dtypes) 
     
 
