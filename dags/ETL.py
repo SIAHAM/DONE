@@ -39,10 +39,16 @@ def data_transform_and_load():
             df_urgences[column] = pd.to_numeric(df_urgences[column], errors='coerce').fillna(0).astype(int)
     df_urgences.columns = df_urgences.columns.str.strip() # supprimer des espaces 
     
+    df_urgences["sursaud_cl_age_corona"] = df_urgences["sursaud_cl_age_corona"].astype(str) 
+    
+    maping = {"0":"tous_âges","1":"0-4_ans", "2":"5-14_ans", "3":"15-44_ans", "4":"45-74_ans", "5":"65-74_ans", "6":"75ans_ou_plus"}
+    df_urgences["sursaud_cl_age_corona"] = df_urgences["sursaud_cl_age_corona"].map(maping)
+    
     #print(df_departements['num_dep'].dtypes)
     #print('age',df_tranches_dage['Age'].dtypes)
     print('------------------------------')
     print(df_urgences.dtypes)
+    print(df_urgences)
     print(df_departements.dtypes)
     print(df_tranches_dage.dtypes)
     print('------------------------------')
